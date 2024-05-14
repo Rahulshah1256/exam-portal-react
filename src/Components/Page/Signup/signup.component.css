@@ -1,0 +1,23 @@
+/* signup.component.css */
+
+.signupBtn {
+    color: blue;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .fullWidth {
+    width: 100%;
+    padding-left: 1vw;
+    padding-right: 1vw;
+  }
+  
+  .card {
+    padding: 5px;
+    margin: 20px;
+    margin-left: 13vw;
+    width: 70%;
+    justify-content: center;
+    align-items: center;
+  }
+  
