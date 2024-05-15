@@ -1,0 +1,1057 @@
+I have a angular project 
+I  want to migrate to React with functional components
+I will give you code with components wise you have to convert into react 
+
+here are my list of components:
+first is SRC folder: Inside SRC folder there is App folder:
+Inside App folder there is Components folder:
+Inside Components folder I have following components:
+
+footer
+inside footer folder I have following files:
+footer.component.ts
+
+
+navbar
+inside navbar folder I have following files:
+navbar.omponent.css
+navbar.component.html
+navbar.component.ts
+
+page folder ---> inside page folder I have following folder:
+
+admin folder --> inside admin folder I have following folder:
+add-category
+inside add-category folder I have following files with code:
+add-category.component.css
+add-category.component.html
+add-category.component.spec.ts
+add-category.component.ts
+
+add-question
+inside add-question folder I have following files with code:
+add-question.component.css
+add-question.component.html
+add-question.component.spec.ts
+add-question.component.ts
+
+add-quiz
+inside add-quiz folder I have following files with code:
+add-quiz.component.css
+add-quiz.component.html
+add-quiz.component.spec.ts
+add-quiz.component.ts
+
+dashboard
+inside dashboard folder I have following files with code:
+dashboard.component.css
+dashboard.component.html
+dashboard.component.spec.ts
+dashboard.component.ts
+
+result
+inside result folder I have following files with code:
+result.component.css
+result.component.html
+result.component.spec.ts
+result.component.ts
+
+sidebar
+inside sidebar folder I have following files with code:
+sidebar.component.css
+sidebar.component.html
+sidebar.component.spec.ts
+sidebar.component.ts
+
+update-category
+inside update-category folder I have following files with code:
+update-category.component.css
+update-category.component.html
+update-category.component.spec.ts
+update-category.component.ts
+
+update-question
+inside update-question folder I have following files with code:
+update-question.component.css
+update-question.component.html
+update-question.component.spec.ts
+update-question.component.ts
+
+update-quiz
+inside update-quiz folder I have following files with code:
+update-quizz.component.css
+update-quiz.component.html
+update-quiz.component.spec.ts
+update-quiz.component.ts
+
+view-categories
+inside view-categories folder I have following files with code:
+view-categories.component.css
+view-categories.component.html
+view-categories.component.spec.ts
+view-categories.component.ts
+
+view-quiz-categories
+inside view-quiz-categories folder I have following files with code:
+view-quiz-categories.component.css
+view-quiz-categories.component.html
+view-quiz-categories.component.spec.ts
+view-quiz-categories.component.ts
+
+view-quizzes
+inside view-quizzes folder I have following files with code:
+view-quizzes.component.css
+view-quizzes.component.html
+view-quizzes.component.spec.ts
+view-quizzes.component.ts
+
+welcome
+inside welcome folder I have following files with code:
+welcome.component.css
+welcome.component.html
+welcome.component.spec.ts
+welcome.component.ts
+
+home -- this folder is inside pages folder
+inside home folder I have following files with code:
+home.component.css
+home.component.html
+home.component.spec.ts
+home.component.ts
+
+login -- this folder is inside pages folder
+inside login folder I have following files with code:
+login.component.css
+login.component.html
+login.component.spec.ts
+login.component.ts
+
+profile  -- this components is inside pages folder
+inside profile folder I have following files with code:
+profile.component.css
+profile.component.html
+profile.component.spec.ts
+profile.component.ts
+
+signup  -- this components is inside pages folder
+inside signup folder I have following files with code:
+signup.component.css
+signup.component.html
+signup.component.spec.ts
+signup.component.ts
+
+update-user   -- this components is inside pages folder
+inside update-user folder I have following files with code:
+update-user.component.css
+update-user.component.html
+update-user.component.spec.ts
+update-user.component.ts
+
+User   -- this folder is inside pages folder
+
+Inside User folder I have the following folders:
+
+instructions 
+inside instructions folder I have following files with code:
+instructions.component.css
+instructions.component.html
+instructions.component.spec.ts
+instructions.component.ts
+
+load-quiz
+inside load-quiz folder I have following files with code:
+load-quiz.component.css
+load-quiz.component.html
+load-quiz.component.spec.ts
+load-quiz.component.ts
+
+side-bar
+inside side-bar folder I have following files with code:
+side-bar.component.css
+side-bar.component.html
+side-bar.component.spec.ts
+side-bar.component.ts
+
+start
+inside start folder I have following files with code:
+start.component.css
+start.component.html
+start.component.spec.ts
+start.component.ts
+
+user-dashboard
+inside user-dashboard folder I have following files with code:
+user-dashboard.component.css
+user-dashboard.component.html
+user-dashboard.component.spec.ts
+user-dashboard.component.ts
+
+user-profile
+inside user-profile folder I have following files with code:
+user-profile.component.css
+user-profile.component.html
+user-profile.component.spec.ts
+user-profile.component.ts
+
+
+services folder: inside services folder I have following files:
+admin.guard.spec.ts
+import { TestBed } from '@angular/core/testing';
+
+import { AdminGuard } from './admin.guard';
+
+describe('AdminGuard', () => {
+  let guard: AdminGuard;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    guard = TestBed.inject(AdminGuard);
+  });
+
+  it('should be created', () => {
+    expect(guard).toBeTruthy();
+  });
+});
+
+admin.guard.ts
+import { Injectable } from '@angular/core';
+import {
+  CanActivate,
+  ActivatedRouteSnapshot,
+  RouterStateSnapshot,
+  UrlTree,
+  Router,
+} from '@angular/router';
+import { Observable } from 'rxjs';
+import { LoginService } from './login.service';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AdminGuard implements CanActivate {
+  constructor(private login: LoginService, private router: Router) {}
+
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ):
+    | Observable<boolean | UrlTree>
+    | Promise<boolean | UrlTree>
+    | boolean
+    | UrlTree {
+    if (this.login.isLoggedIn() && this.login.getUserRole() == 'ADMIN') {
+      return true;
+    }
+
+    this.router.navigate(['login']);
+
+    return false;
+  }
+}
+
+
+auth.interceptor.ts
+import {
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest,
+  HTTP_INTERCEPTORS,
+} from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { LoginService } from './login.service';
+
+@Injectable()
+export class AuthInterceptor implements HttpInterceptor {
+  constructor(private login: LoginService) {}
+
+  intercept(
+    req: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
+    //add the jwt token (localStorage) request
+    let authReq = req;
+    const token = this.login.getToken();
+    console.log('inside interceptor');
+
+    if (token != null) {
+      authReq = authReq.clone({
+        setHeaders: { Authorization: `Bearer ${token}` },
+      });
+    }
+    return next.handle(authReq);
+  }
+}
+
+export const authInterceptorProviders = [
+  {
+    provide: HTTP_INTERCEPTORS,
+    useClass: AuthInterceptor,
+    multi: true,
+  },
+];
+
+
+category.service.spec.ts
+import { TestBed } from '@angular/core/testing';
+
+import { CategoryService } from './category.service';
+
+describe('CategoryService', () => {
+  let service: CategoryService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(CategoryService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+
+
+category.service.ts
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import baseUrl from './helper';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class CategoryService {
+  constructor(private _http: HttpClient) {}
+  //load all the cateogries
+  public categories() {
+    return this._http.get(`${baseUrl}/category/`);
+  }
+
+  public getCategory(cid: any) {
+    return this._http.get(`${baseUrl}/category/${cid}`);
+  }
+
+  //add new category
+  public addCategory(category) {
+    return this._http.post(`${baseUrl}/category/`, category);
+  }
+
+  public deleteCategory(cid: any) {
+    return this._http.delete(`${baseUrl}/category/${cid}`);
+  }
+  public updateCategory(data: any) {
+    console.log(data);
+    return this._http.put(`${baseUrl}/category/`, data);
+  }
+}
+
+
+helper.ts
+let baseUrl = 'http://localhost:8080';
+export default baseUrl;
+
+
+login.service.spec.ts
+import { TestBed } from '@angular/core/testing';
+
+import { LoginService } from './login.service';
+
+describe('LoginService', () => {
+  let service: LoginService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(LoginService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+
+
+login.service.ts
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
+import baseUrl from './helper';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class LoginService {
+  public loginStatusSubject = new Subject<boolean>();
+
+  constructor(private http: HttpClient) {}
+
+  //current user: which is loggedin
+  public getCurrentUser() {
+    return this.http.get(`${baseUrl}/current-user`);
+  }
+
+  //generate token
+
+  public generateToken(loginData: any) {
+    return this.http.post(`${baseUrl}/generate-token`, loginData);
+  }
+
+  //login user: set token in localStorage
+  public loginUser(token) {
+    localStorage.setItem('token', token);
+
+    return true;
+  }
+
+  //isLogin: user is logged in or not
+  public isLoggedIn() {
+    let tokenStr = localStorage.getItem('token');
+    if (tokenStr == undefined || tokenStr == '' || tokenStr == null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  // logout : remove token from local storage
+  public logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    return true;
+  }
+
+  //get token
+  public getToken() {
+    return localStorage.getItem('token');
+  }
+
+  //set userDetail
+  public setUser(user) {
+    localStorage.setItem('user', JSON.stringify(user));
+  }
+
+  //getUser
+  public getUser() {
+    let userStr = localStorage.getItem('user');
+    if (userStr != null) {
+      return JSON.parse(userStr);
+    } else {
+      this.logout();
+      return null;
+    }
+  }
+
+  //get user role
+
+  public getUserRole() {
+    let user = this.getUser();
+    return user.authorities[0].authority;
+  }
+}
+
+
+normal.guard.spec.ts
+import { TestBed } from '@angular/core/testing';
+
+import { NormalGuard } from './normal.guard';
+
+describe('NormalGuard', () => {
+  let guard: NormalGuard;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    guard = TestBed.inject(NormalGuard);
+  });
+
+  it('should be created', () => {
+    expect(guard).toBeTruthy();
+  });
+});
+
+
+normal.guard.ts
+import { Injectable } from '@angular/core';
+import {
+  CanActivate,
+  ActivatedRouteSnapshot,
+  RouterStateSnapshot,
+  UrlTree,
+  Router,
+} from '@angular/router';
+import { Observable } from 'rxjs';
+import { LoginService } from './login.service';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class NormalGuard implements CanActivate {
+  constructor(private login: LoginService, private router: Router) {}
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ):
+    | Observable<boolean | UrlTree>
+    | Promise<boolean | UrlTree>
+    | boolean
+    | UrlTree {
+    if (this.login.isLoggedIn() && this.login.getUserRole() == 'NORMAL') {
+      return true;
+    }
+
+    this.router.navigate(['login']);
+    return false;
+  }
+}
+
+
+question.service.spec.ts
+import { TestBed } from '@angular/core/testing';
+
+import { QuestionService } from './question.service';
+
+describe('QuestionService', () => {
+  let service: QuestionService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(QuestionService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+
+
+question.service.ts
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import baseUrl from './helper';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class QuestionService {
+  constructor(private _http: HttpClient) {}
+
+  public getQuestionsOfQuiz(qid) {
+    return this._http.get(`${baseUrl}/question/quiz/all/${qid}`);
+  }
+
+  public getQuestionsOfQuizForTest(qid) {
+    return this._http.get(`${baseUrl}/question/quiz/${qid}`);
+  }
+
+  //add question
+  public addQuestion(question) {
+    return this._http.post(`${baseUrl}/question/`, question);
+  }
+
+  public updateQuestion(data: any) {
+    return this._http.put(`${baseUrl}/question/`, data);
+  }
+  //delete question
+  public deleteQuestion(questionId) {
+    return this._http.delete(`${baseUrl}/question/${questionId}`);
+  }
+
+  //eval quiz
+  public evalQuiz(questions) {
+    return this._http.post(`${baseUrl}/question/eval-quiz`, questions);
+  }
+}
+
+
+quiz.service.spec.ts
+import { TestBed } from '@angular/core/testing';
+
+import { QuizService } from './quiz.service';
+
+describe('QuizService', () => {
+  let service: QuizService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(QuizService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+
+
+quiz.service.ts
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import baseUrl from './helper';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class QuizService {
+  constructor(private _http: HttpClient) {}
+
+  public quizzes() {
+    return this._http.get(`${baseUrl}/quiz/`);
+  }
+
+  //add quiz
+  public addQuiz(quiz) {
+    return this._http.post(`${baseUrl}/quiz/`, quiz);
+  }
+
+  //delete quiz
+  public deleteQuiz(qId) {
+    return this._http.delete(`${baseUrl}/quiz/${qId}`);
+  }
+
+  //get the single quiz
+
+  public getQuiz(qId) {
+    return this._http.get(`${baseUrl}/quiz/${qId}`);
+  }
+
+  //update quiz
+  public updateQuiz(quiz) {
+    return this._http.put(`${baseUrl}/quiz/`, quiz);
+  }
+
+  //get quizzes of category
+  public getQuizzesOfCategory(cid) {
+    return this._http.get(`${baseUrl}/quiz/category/${cid}`);
+  }
+  //qet active quizzes
+  public getActiveQuizzes() {
+    return this._http.get(`${baseUrl}/quiz/active`);
+  }
+
+  //get active quizzes of category
+  public getActiveQuizzesOfCategory(cid) {
+    return this._http.get(`${baseUrl}/quiz/category/active/${cid}`);
+  }
+}
+
+
+result.service.spec.ts
+import { TestBed } from '@angular/core/testing';
+
+import { ResultService } from './result.service';
+
+describe('ResultService', () => {
+  let service: ResultService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(ResultService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+
+
+
+
+result.service.ts
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import baseUrl from './helper';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ResultService {
+
+  constructor(private _http: HttpClient) { }
+
+  public result() {
+    return this._http.get(`${baseUrl}/result/`);
+  }
+
+  public getResultByUserAndQuiz(qid: any, uid: any) {
+    return this._http.get(`${baseUrl}/result/${qid}/${uid}`);
+  }
+
+  //add new category
+  public addResult(result) {
+    return this._http.post(`${baseUrl}/result/`, result);
+  }
+
+  public getResultByQuiz(qid: any) {
+    return this._http.get(`${baseUrl}/result/${qid}`);
+  }
+}
+
+
+user.service.spec.ts
+import { TestBed } from '@angular/core/testing';
+
+import { UserService } from './user.service';
+
+describe('UserService', () => {
+  let service: UserService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(UserService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+
+user.service.ts
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import baseUrl from './helper';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UserService {
+  constructor(private http: HttpClient) {}
+
+  //add user
+
+  public addUser(user: any) {
+    return this.http.post(`${baseUrl}/user/`, user);
+  }
+
+  public updateUser(uid: any) {
+    return this.http.post(`${baseUrl}/user/`, {uid});
+  }
+
+}
+
+
+
+The following files are inside App folder:
+app-routing.module.ts
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { AddCategoryComponent } from './pages/admin/add-category/add-category.component';
+import { AddQuestionComponent } from './pages/admin/add-question/add-question.component';
+import { AddQuizComponent } from './pages/admin/add-quiz/add-quiz.component';
+
+import { DashboardComponent } from './pages/admin/dashboard/dashboard.component';
+import { UpdateQuizComponent } from './pages/admin/update-quiz/update-quiz.component';
+import { ViewCategoriesComponent } from './pages/admin/view-categories/view-categories.component';
+import { ViewQuizQuestionsComponent } from './pages/admin/view-quiz-questions/view-quiz-questions.component';
+import { ViewQuizzesComponent } from './pages/admin/view-quizzes/view-quizzes.component';
+import { WelcomeComponent } from './pages/admin/welcome/welcome.component';
+import { HomeComponent } from './pages/home/home.component';
+import { LoginComponent } from './pages/login/login.component';
+import { ProfileComponent } from './pages/profile/profile.component';
+import { SignupComponent } from './pages/signup/signup.component';
+import { InstructionsComponent } from './pages/user/instructions/instructions.component';
+import { LoadQuizComponent } from './pages/user/load-quiz/load-quiz.component';
+import { StartComponent } from './pages/user/start/start.component';
+import { UserDashboardComponent } from './pages/user/user-dashboard/user-dashboard.component';
+import { AdminGuard } from './services/admin.guard';
+import { NormalGuard } from './services/normal.guard';
+import { UpdateCategoryComponent } from './pages/admin/update-category/update-category.component';
+import { UpdateQuestionComponent } from './pages/admin/update-question/update-question.component';
+import { UserProfileComponent } from './pages/user/user-profile/user-profile.component';
+import { ResultComponent } from './pages/admin/result/result.component';
+import { UpdateUserComponent } from './pages/update-user/update-user.component';
+
+const routes: Routes = [
+  {
+    path: '',
+    component: HomeComponent,
+    pathMatch: 'full',
+  },
+  {
+    path: 'signup',
+    component: SignupComponent,
+    pathMatch: 'full',
+  },
+  {
+    path: 'login',
+    component: LoginComponent,
+    pathMatch: 'full',
+  },
+  {
+    path: 'admin',
+    component: DashboardComponent,
+    canActivate: [AdminGuard],
+    children: [
+      {
+        path: '',
+        component: WelcomeComponent,
+      },
+      {
+        path: 'profile',
+        component: ProfileComponent,
+      },
+      {
+        path: 'update-user',
+        component: UpdateUserComponent
+      },
+      {
+        path: 'categories',
+        component: ViewCategoriesComponent,
+      },
+      {
+        path: 'add-category',
+        component: AddCategoryComponent,
+      },
+      {
+        path: 'update-category/:cid',
+        component: UpdateCategoryComponent,
+      },
+      {
+        path: 'quizzes',
+        component: ViewQuizzesComponent,
+      },
+      {
+        path: 'add-quiz',
+        component: AddQuizComponent,
+      },
+      {
+        path: 'quiz/:qid',
+        component: UpdateQuizComponent,
+      },
+      {
+        path: 'view-questions/:qid/:title',
+        component: ViewQuizQuestionsComponent,
+      },
+      {
+        path: 'add-question/:qid/:title',
+        component: AddQuestionComponent,
+      },
+      {
+        path: 'update-question/:quesId',
+        component: UpdateQuestionComponent,
+      },
+      {
+        path: 'result',
+        component: ResultComponent,
+      },
+    ],
+  },
+  {
+    path: 'user-dashboard',
+    component: UserDashboardComponent,
+    canActivate: [NormalGuard],
+    children: [
+      {
+        path: ':catId',
+        component: LoadQuizComponent,
+      },
+      {
+        path: 'instructions/:qid',
+        component: InstructionsComponent,
+      },
+      {
+        path: 'user-profile',
+        component: UserProfileComponent,
+      },
+    ],
+  },
+  {
+    path: 'start/:qid',
+    component: StartComponent,
+    canActivate: [NormalGuard],
+  },
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule],
+})
+export class AppRoutingModule {}
+
+
+app.component.html
+<ngx-ui-loader
+  fgsColor="#ff4081"
+  pbColor="#ff4081"
+  text="Please wait.."
+  pbThickness="6"
+  textColor="#ff4081"
+></ngx-ui-loader>
+
+<div ngxUiLoaderBlurred blur="6">
+  <app-navbar></app-navbar>
+
+  <!-- dynamic content -->
+  <router-outlet></router-outlet>
+</div>
+
+
+
+app.component.spec.ts
+import { TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { AppComponent } from './app.component';
+
+describe('AppComponent', () => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [
+        RouterTestingModule
+      ],
+      declarations: [
+        AppComponent
+      ],
+    }).compileComponents();
+  });
+
+  it('should create the app', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app).toBeTruthy();
+  });
+
+  it(`should have as title 'examfront'`, () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app.title).toEqual('examfront');
+  });
+
+  it('should render title', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement;
+    expect(compiled.querySelector('.content span').textContent).toContain('examfront app is running!');
+  });
+});
+
+
+
+app.component.ts
+import { Component } from '@angular/core';
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css'],
+})
+export class AppComponent {
+  title = 'TestYourself';
+}
+
+
+
+
+app.module.ts
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatButtonModule } from '@angular/material/button';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { FooterComponent } from './components/footer/footer.component';
+import { SignupComponent } from './pages/signup/signup.component';
+import { LoginComponent } from './pages/login/login.component';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { HomeComponent } from './pages/home/home.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { authInterceptorProviders } from './services/auth.interceptor';
+import { DashboardComponent } from './pages/admin/dashboard/dashboard.component';
+import { UserDashboardComponent } from './pages/user/user-dashboard/user-dashboard.component';
+import { ProfileComponent } from './pages/profile/profile.component';
+import { MatListModule } from '@angular/material/list';
+import { SidebarComponent } from './pages/admin/sidebar/sidebar.component';
+import { WelcomeComponent } from './pages/admin/welcome/welcome.component';
+import { ViewCategoriesComponent } from './pages/admin/view-categories/view-categories.component';
+import { AddCategoryComponent } from './pages/admin/add-category/add-category.component';
+import { ViewQuizzesComponent } from './pages/admin/view-quizzes/view-quizzes.component';
+import { AddQuizComponent } from './pages/admin/add-quiz/add-quiz.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSelectModule } from '@angular/material/select';
+import { UpdateQuizComponent } from './pages/admin/update-quiz/update-quiz.component';
+import { ViewQuizQuestionsComponent } from './pages/admin/view-quiz-questions/view-quiz-questions.component';
+import { AddQuestionComponent } from './pages/admin/add-question/add-question.component';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+
+import { SidebarComponent as UserSidebar } from './pages/user/sidebar/sidebar.component';
+import { LoadQuizComponent } from './pages/user/load-quiz/load-quiz.component';
+import { InstructionsComponent } from './pages/user/instructions/instructions.component';
+import { StartComponent } from './pages/user/start/start.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { NgxUiLoaderHttpModule, NgxUiLoaderModule } from 'ngx-ui-loader';
+import { UpdateCategoryComponent } from './pages/admin/update-category/update-category.component';
+import { UpdateQuestionComponent } from './pages/admin/update-question/update-question.component';
+import { UserProfileComponent } from './pages/user/user-profile/user-profile.component';
+import { ResultComponent } from './pages/admin/result/result.component';
+import { UpdateUserComponent } from './pages/update-user/update-user.component';
+
+
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    NavbarComponent,
+    FooterComponent,
+    SignupComponent,
+    LoginComponent,
+    HomeComponent,
+    DashboardComponent,
+    UserDashboardComponent,
+    ProfileComponent,
+    SidebarComponent,
+    WelcomeComponent,
+    ViewCategoriesComponent,
+    AddCategoryComponent,
+    ViewQuizzesComponent,
+    AddQuizComponent,
+    UpdateQuizComponent,
+    ViewQuizQuestionsComponent,
+    AddQuestionComponent,
+    UserSidebar,
+    LoadQuizComponent,
+    InstructionsComponent,
+    StartComponent,
+    UpdateCategoryComponent,
+    UpdateQuestionComponent,
+    UserProfileComponent,
+    ResultComponent,
+    UpdateUserComponent,
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    MatButtonModule,
+    MatInputModule,
+    MatFormFieldModule,
+    FormsModule,
+    HttpClientModule,
+    MatSnackBarModule,
+    MatCardModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatListModule,
+    MatSlideToggleModule,
+    MatSelectModule,
+    CKEditorModule,
+    MatProgressSpinnerModule,
+    NgxUiLoaderModule,
+    NgxUiLoaderHttpModule.forRoot({
+      showForeground: true,
+    }),
+  ],
+  providers: [authInterceptorProviders],
+  bootstrap: [AppComponent],
+})
+export class AppModule {}
+
+I will give you the code components wise you just have to convert into react
+
+and generate the react folder structure in standard format
+
+
+
+

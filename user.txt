@@ -1,0 +1,967 @@
+Inside User folder I have the following folders:
+
+instructions 
+inside instructions folder I have following files with code:
+instructions.component.css
+instructions.component.html
+<div class="bootstrap-wrapper">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <mat-card class="mt20">
+          <mat-card-header>
+            <mat-card-title>
+              Read the instructions of this page carefully
+            </mat-card-title>
+            <mat-card-subtitle> One step more to go </mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content class="ml20">
+            <h1>{{ quiz.title }}</h1>
+            <p>{{ quiz.description }}</p>
+
+            <mat-divider></mat-divider>
+            <br />
+            <h1>Important Instructions</h1>
+
+            <ul>
+              <li>Read the questions carefully</li>
+              <li>All questions are MCQ types</li>
+              <li>
+                There are <b>{{ quiz.numberOfQuestions }} Questions</b> in this
+                quiz
+              </li>
+              <li>
+                Time limit is
+                <b>{{ quiz.numberOfQuestions * 2 }} minutes only</b>
+              </li>
+              <li>
+                Each question carries
+                <b>{{ quiz.maxMarks / quiz.numberOfQuestions }} marks</b>
+              </li>
+              <li>After time finished quiz will be submitted automatically</li>
+            </ul>
+            <ul>
+              <li>Click <b>Start</b> to start the quiz</li>
+              <li>You can not resume the quiz if gets interuppted</li>
+              <li>Time will start when you click the quiz</li>
+              <li>Report will be generated in pdf form</li>
+            </ul>
+          </mat-card-content>
+          <mat-card-actions class="text-center">
+            <button
+              (click)="startQuiz()"
+              class=""
+              mat-raised-button
+              color="primary"
+            >
+              Start
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>
+
+instructions.component.spec.ts
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { InstructionsComponent } from './instructions.component';
+
+describe('InstructionsComponent', () => {
+  let component: InstructionsComponent;
+  let fixture: ComponentFixture<InstructionsComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ InstructionsComponent ]
+    })
+    .compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(InstructionsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+instructions.component.ts
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { QuizService } from 'src/app/services/quiz.service';
+import Swal from 'sweetalert2';
+
+@Component({
+  selector: 'app-instructions',
+  templateUrl: './instructions.component.html',
+  styleUrls: ['./instructions.component.css'],
+})
+export class InstructionsComponent implements OnInit {
+  qid;
+  quiz;
+
+  constructor(
+    private _route: ActivatedRoute,
+    private _quiz: QuizService,
+    private _router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.qid = this._route.snapshot.params.qid;
+
+    this._quiz.getQuiz(this.qid).subscribe(
+      (data: any) => {
+        this.quiz = data;
+      },
+      (error) => {
+        console.log(error);
+        alert('Error in loading quiz data');
+      }
+    );
+  }
+
+  startQuiz() {
+    Swal.fire({
+      title: 'Do you want to start the quiz?',
+
+      showCancelButton: true,
+      confirmButtonText: `Start`,
+      denyButtonText: `Don't start`,
+      icon: 'info',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this._router.navigate(['/start/' + this.qid]);
+      } else if (result.isDenied) {
+        Swal.fire('Changes are not saved', '', 'info');
+      }
+    });
+  }
+}
+
+
+load-quiz
+inside load-quiz folder I have following files with code:
+load-quiz.component.css
+.truncate {
+  display: block;
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.example-header-image {
+  background-image: url("/assets/exam1.png");
+  background-size: cover;
+}
+
+.img {
+  width: 100%;
+  height: 100px;
+  margin-bottom: 12px;
+  object-fit: cover;
+}
+.click {
+  cursor: pointer;
+}
+.truncate {
+  display: block;
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.info {
+  display: flex;
+  justify-content: space-between;
+  color: rgb(231, 20, 20);
+}
+.btn {
+  width: 100%;
+  font-size: 18px;
+}
+
+load-quiz.component.html
+<div class="bootstrap-wrapper">
+  <div class="container-fluid">
+    <div class="mat-headline text-center">
+      <h1 class="mt20">Available Quizzes</h1>
+    </div>
+
+    <div class="row mt20" *ngIf="quizzes">
+      <div class="col-md-4" *ngFor="let q of quizzes">
+        <mat-card class="mb20">
+          <mat-card-header>
+            <div mat-card-avatar class="example-header-image"></div>
+            <mat-card-title>
+              {{ q.title }}
+            </mat-card-title>
+            <mat-card-subtitle>
+              {{ q.category.title }}
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p class="truncate">{{ q.description }}</p>
+          </mat-card-content>
+          <mat-card-action>
+            <button
+              mat-raised-button
+              color="primary"
+              [routerLink]="'/user-dashboard/instructions/' + q.qId"
+              class="ml10"
+            >
+              Start
+            </button>
+            <button mat-button color="accent">
+              Questions : {{ q.numberOfQuestions }}
+            </button>
+            <button mat-button color="accent">M.M : {{ q.maxMarks }}</button>
+          </mat-card-action>
+        </mat-card>
+      </div>
+
+      <div class="col-md-12" *ngIf="quizzes.length == 0">
+        <mat-card>
+          <mat-card-content>
+            <h1>No Quiz for this category</h1>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>
+
+load-quiz.component.spec.ts
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { LoadQuizComponent } from './load-quiz.component';
+
+describe('LoadQuizComponent', () => {
+  let component: LoadQuizComponent;
+  let fixture: ComponentFixture<LoadQuizComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ LoadQuizComponent ]
+    })
+    .compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(LoadQuizComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+load-quiz.component.ts
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { QuizService } from 'src/app/services/quiz.service';
+
+@Component({
+  selector: 'app-load-quiz',
+  templateUrl: './load-quiz.component.html',
+  styleUrls: ['./load-quiz.component.css'],
+})
+export class LoadQuizComponent implements OnInit {
+  catId;
+  quizzes;
+  constructor(private _route: ActivatedRoute, private _quiz: QuizService) {}
+
+  ngOnInit(): void {
+    this._route.params.subscribe((params) => {
+      this.catId = params.catId;
+      if (this.catId == 0) {
+        console.log('Load all the quiz');
+
+        this._quiz.getActiveQuizzes().subscribe(
+          (data: any) => {
+            this.quizzes = data;
+            console.log(this.quizzes);
+          },
+          (error) => {
+            console.log(error);
+            alert('error in loading all quizzes');
+          }
+        );
+      } else {
+        console.log('Load specific quiz');
+
+        this._quiz.getActiveQuizzesOfCategory(this.catId).subscribe(
+          (data: any) => {
+            this.quizzes = data;
+            console.log(this.quizzes);
+          },
+          (error) => {
+            alert('error in loading quiz data');
+          }
+        );
+      }
+    });
+  }
+}
+
+
+side-bar
+inside side-bar folder I have following files with code:
+side-bar.component.css
+.active {
+  color: #5e21c9;
+  font-weight: bold !important;
+  font-size: 18px;
+}
+.sidebar {
+  width: 260px;
+  background-color: rgb(179, 231, 199);
+  min-height: 100vh;
+  margin-top: 0px;
+  margin-bottom: 5px;
+  margin-left: -50px;
+}
+.list {
+  font-weight: 600;
+}
+
+side-bar.component.html
+<mat-card class="sidebar text-center">
+  <mat-list>
+    <mat-action-list>
+      <mat-list-item
+        class="list"
+        routerLinkActive="active"
+        routerLink="/user-dashboard/0"
+      >
+        <mat-icon mat-list-icon>home</mat-icon> All Quizzes
+      </mat-list-item>
+
+      <mat-list-item
+        class="list"
+        [routerLink]="'/user-dashboard/' + c.cid"
+        *ngFor="let c of categories"
+        routerLinkActive="active"
+      >
+        <mat-icon mat-list-icon>category</mat-icon> {{ c.title }}
+      </mat-list-item>
+      <!-- 
+    <mat-list-item class="list"  routerLinkActive="active" routerLink="/login">
+      <mat-icon mat-list-icon>logout</mat-icon> Logout
+    </mat-list-item> -->
+    </mat-action-list>
+  </mat-list>
+</mat-card>
+
+side-bar.component.spec.ts
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { SidebarComponent } from './sidebar.component';
+
+describe('SidebarComponent', () => {
+  let component: SidebarComponent;
+  let fixture: ComponentFixture<SidebarComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ SidebarComponent ]
+    })
+    .compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(SidebarComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+side-bar.component.ts
+import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { CategoryService } from 'src/app/services/category.service';
+
+@Component({
+  selector: 'app-sidebar-user',
+  templateUrl: './sidebar.component.html',
+  styleUrls: ['./sidebar.component.css'],
+})
+export class SidebarComponent implements OnInit {
+  categories;
+  constructor(private _cat: CategoryService, private _snack: MatSnackBar) {}
+
+  ngOnInit(): void {
+    this._cat.categories().subscribe(
+      (data: any) => {
+        this.categories = data;
+      },
+      (error) => {
+        this._snack.open('Error in loading categories from server', '', {
+          duration: 3000,
+        });
+      }
+    );
+  }
+}
+
+
+start
+inside start folder I have following files with code:
+start.component.css
+.camera-feed {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  margin-top: 1000px;
+}
+
+start.component.html
+<div class="bootstrap-wrapper" *ngIf="!isSubmit">
+  <div class="container-fluid">
+    <div class="row">
+      <mat-card class="col-md-2" style="margin-top: 50px;">
+        <h2 class="text-center">Instructions</h2>
+        <ul>
+          <li>Do not refresh the page</li>
+          <li>You can not go back</li>
+          <li>Careful of the time</li>
+        </ul>
+      </mat-card>
+      <div class="col-md-8">
+        <div class="text-center">
+          <ng-container *ngIf="questions">
+            <h1 class="title">{{ questions[0].quiz.title }} Quiz</h1>
+          </ng-container>
+        </div>
+
+        <mat-card *ngFor="let q of questions; let i = index" class="mt10">
+          <mat-card-content>
+            <p>
+              <b>Q {{ i + 1 }}</b>
+              <span class="ml10" [innerHTML]="q.content"></span>
+            </p>
+
+            <mat-divider> </mat-divider>
+            <br />
+
+            <div class="row mt20">
+              <div class="col-md-6">
+                <input
+                  type="radio"
+                  [value]="q.option1"
+                  [name]="i"
+                  [(ngModel)]="q.givenAnswer"
+                />{{ q.option1 }}
+              </div>
+              <div class="col-md-6">
+                <input
+                  type="radio"
+                  [value]="q.option2"
+                  [name]="i"
+                  [(ngModel)]="q.givenAnswer"
+                />{{ q.option2 }}
+              </div>
+            </div>
+
+            <div class="row mt20">
+              <div class="col-md-6">
+                <input
+                  type="radio"
+                  [value]="q.option3"
+                  [name]="i"
+                  [(ngModel)]="q.givenAnswer"
+                />{{ q.option3 }}
+              </div>
+              <div class="col-md-6">
+                <input
+                  type="radio"
+                  [value]="q.option4"
+                  [name]="i"
+                  [(ngModel)]="q.givenAnswer"
+                />{{ q.option4 }}
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <div class="container text-center mt20 mb20">
+          <button (click)="submitQuiz()" mat-raised-button color="primary">
+            Submit
+          </button>
+        </div>
+      </div>
+      <!-- <div class="col-md-2" style="margin-top: 50px"> -->
+        <mat-card class="col-md-2" style="margin-top: 50px;">
+          <video #videoElement class="camera-feed" style="margin: 5px; width: 100%;" playsinline autoplay></video>
+          <mat-card-header>
+            <mat-card-title class="text-center"> Progress </mat-card-title>
+            <mat-card-subtitle class="text-center">
+              Quiz will automatically submitted when timer reaches to <b>0:0</b>
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <h1 class="text-center">{{ getFormattedTime() }}</h1>
+            <mat-spinner
+              mode="determinate"
+              color="accent"
+              style="margin: auto"
+              [value]="(timer / (this.questions.length * 2 * 60)) * 100"
+            ></mat-spinner>
+          </mat-card-content>
+        </mat-card>
+      <!-- </div> -->
+    </div>
+  </div>
+</div>
+
+<div class="bootstrap-wrapper" *ngIf="isSubmit">
+  <div class="row mt20">
+    <div class="col-md-6 offset-md-3">
+      <mat-card>
+        <mat-card-header class="text-center">
+          <mat-card-title> Quiz Result </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="text-center">
+          <h1>Marks Got : {{ marksGot }}</h1>
+          <h1>Correct Answers : {{ correctAnswers }}</h1>
+          <h1>Questions Attempted :{{ attempted }}</h1>
+        </mat-card-content>
+        <div class="container mt-3 text-center">
+          <button
+            mat-raised-button
+            color="primary"
+            style="margin-right: 30px"
+            (click)="print()"
+          >
+            Print
+          </button>
+          <button
+            mat-raised-button
+            color="warn"
+            [routerLink]="'/user-dashboard/0'"
+          >
+            Home
+          </button>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+start.component.spec.ts
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { StartComponent } from './start.component';
+
+describe('StartComponent', () => {
+  let component: StartComponent;
+  let fixture: ComponentFixture<StartComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ StartComponent ]
+    })
+    .compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(StartComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+start.component.ts
+import { LocationStrategy } from '@angular/common';
+import { ThisReceiver } from '@angular/compiler';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { QuestionService } from 'src/app/services/question.service';
+import { QuizService } from 'src/app/services/quiz.service';
+import Swal from 'sweetalert2';
+import * as RecordRTC from 'recordrtc';
+
+declare const document: any;
+
+@Component({
+  selector: 'app-start',
+  templateUrl: './start.component.html',
+  styleUrls: ['./start.component.css'],
+})
+export class StartComponent implements OnInit {
+  qid;
+  questions;
+
+  marksGot = 0;
+  correctAnswers = 0;
+  attempted = 0;
+
+  isSubmit = false;
+
+  timer: any;
+
+  recorder: any;
+
+  @ViewChild('videoElement', { static: false }) videoElement: ElementRef;
+  videoStream: MediaStream;
+
+  constructor(
+    private locationSt: LocationStrategy,
+    private _route: ActivatedRoute,
+    private _question: QuestionService,
+    private _quiz: QuizService
+  ) {}
+
+  ngOnInit(): void {
+    this.preventBackButton();
+    this.qid = this._route.snapshot.params.qid;
+    console.log(this.qid);
+    this.loadQuestions();
+
+    this.recorder = RecordRTC(['screen'], {
+      type: 'video',
+    });
+
+    // this.startRecording();
+
+    // this.stopRecording();
+
+    this.startVideoStream();
+  }
+
+  // startRecording() {
+  //   this.recorder.startRecording();
+  // }
+
+  // stopRecording() {
+  //   this.recorder.stopRecording(() => {
+  //     const blob = this.recorder.getBlob();
+  //   });
+  // }
+
+  startVideoStream() {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then((stream) => {
+          this.videoStream = stream;
+          this.videoElement.nativeElement.srcObject = stream;
+        })
+        .catch((error) => {
+          console.error('Error accessing camera:', error);
+        });
+    } else {
+      console.error('getUserMedia not supported in this browser');
+    }
+  }
+  loadQuestions() {
+    this._question.getQuestionsOfQuizForTest(this.qid).subscribe(
+      (data: any) => {
+        this.questions = data;
+
+        this.timer = this.questions.length * 2 * 60;
+
+        console.log(this.questions);
+
+        // this.startFullScreen();
+        this.startTimer();
+
+        navigator.mediaDevices
+          .getUserMedia({ video: true })
+          .then((stream) => {
+            this.videoStream = stream;
+            this.videoElement.nativeElement.srcObject = stream;
+          })
+          .catch((error) => {
+            console.log('Error accessing camera:', error);
+            Swal.fire('Error', 'Error accessing camera', 'error');
+          });
+      },
+
+      (error) => {
+        console.log(error);
+        Swal.fire('Error', 'Error in loading questions of quiz', 'error');
+      }
+    );
+  }
+
+  // startFullScreen() {
+  //   const element = document.documentElement;
+  //   if (element.requestFullscreen) {
+  //     element.requestFullscreen();
+  //   } else if (element.mozRequestFullScreen) {
+  //     element.mozRequestFullScreen();
+  //   } else if (element.webkitRequestFullscreen) {
+  //     element.webkitRequestFullscreen();
+  //   } else if (element.msRequestFullscreen) {
+  //     element.msRequestFullscreen();
+  //   }
+  // }
+
+  // exitFullScreen() {
+  //   if (document.exitFullscreen) {
+  //     document.exitFullscreen();
+  //   } else if (document.mozCancelFullScreen) {
+  //     document.mozCancelFullScreen();
+  //   } else if (document.webkitExitFullscreen) {
+  //     document.webkitExitFullscreen();
+  //   } else if (document.msExitFullscreen) {
+  //     document.msExitFullscreen();
+  //   }
+  // }
+
+  ngOnDestroy() {
+    // this.exitFullScreen();
+  }
+  preventBackButton() {
+    history.pushState(null, null, location.href);
+    this.locationSt.onPopState(() => {
+      history.pushState(null, null, location.href);
+    });
+  }
+
+  submitQuiz() {
+    Swal.fire({
+      title: 'Do you want to submit the quiz?',
+      showCancelButton: true,
+      confirmButtonText: `Submit`,
+      icon: 'info',
+    }).then((e) => {
+      if (e.isConfirmed) {
+        this.evalQuiz();
+      }
+    });
+  }
+
+  startTimer() {
+    let t = window.setInterval(() => {
+      if (this.timer <= 0) {
+        this.evalQuiz();
+        clearInterval(t);
+      } else {
+        this.timer--;
+      }
+    }, 1000);
+  }
+
+  getFormattedTime() {
+    let mm = Math.floor(this.timer / 60);
+    let ss = this.timer - mm * 60;
+    return `${mm} min : ${ss} sec`;
+  }
+
+  evalQuiz() {
+    this._question.evalQuiz(this.questions).subscribe(
+      (data: any) => {
+        console.log(data);
+        this.marksGot = data.marksGot;
+        this.correctAnswers = data.correctAnswers;
+        this.attempted = data.attempted;
+        this.isSubmit = true;
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+  print() {
+    window.print();
+  }
+}
+
+
+user-dashboard
+inside user-dashboard folder I have following files with code:
+user-dashboard.component.css
+user-dashboard.component.html
+<div class="bootstrap-wrapper">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-2">
+        <app-sidebar-user></app-sidebar-user>
+      </div>
+
+      <div class="col-md-10">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>
+
+user-dashboard.component.spec.ts
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { UserDashboardComponent } from './user-dashboard.component';
+
+describe('UserDashboardComponent', () => {
+  let component: UserDashboardComponent;
+  let fixture: ComponentFixture<UserDashboardComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ UserDashboardComponent ]
+    })
+    .compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(UserDashboardComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+user-dashboard.component.ts
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-user-dashboard',
+  templateUrl: './user-dashboard.component.html',
+  styleUrls: ['./user-dashboard.component.css']
+})
+export class UserDashboardComponent implements OnInit {
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+}
+
+
+user-profile
+inside user-profile folder I have following files with code:
+user-profile.component.css
+.profile-image {
+  max-width: 150px;
+  max-height: 150px;
+  border: 2px solid #ff4081;
+  border-radius: 50%;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table tr td {
+  padding: 15px 10px;
+  border: 0.5px solid #e2e2e2;
+}
+
+user-profile.component.html
+<mat-card *ngIf="user">
+  <div class="container text-center">
+    <h1>Your Profile Details</h1>
+  </div>
+  <mat-card-content>
+    <div class="bootstrap-wrapper">
+      <div class="container">
+        <div class="container text-center">
+          <img
+            src="https://t4.ftcdn.net/jpg/03/46/93/61/360_F_346936114_RaxE6OQogebgAWTalE1myseY1Hbb5qPM.jpg"
+            alt=""
+            class="profile-image"
+          />
+
+          <h1 class="mt20">{{ user.firstName }} {{ user.lastName }}</h1>
+        </div>
+
+        <div class="row">
+          <div class="col-md-10 offset-md-1">
+            <table class="table text-center">
+              <tr>
+                <td>Username</td>
+                <td>{{ user.username }}</td>
+              </tr>
+              <tr>
+                <td>Userid</td>
+                <td>EXAM{{ user.id }}</td>
+              </tr>
+              <tr>
+                <td>Phone</td>
+                <td>{{ user.phone }}</td>
+              </tr>
+              <tr>
+                <td>Role</td>
+                <td>{{ user.authorities[0].authority }}</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+  <mat-card-actions class="text-center">
+    <!-- <button mat-raised-button color="primary">UPDATE</button>
+      <button mat-raised-button color="accent">SHARE</button> -->
+  </mat-card-actions>
+</mat-card>
+
+user-profile.component.spec.ts
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { UserProfileComponent } from './user-profile.component';
+
+describe('UserProfileComponent', () => {
+  let component: UserProfileComponent;
+  let fixture: ComponentFixture<UserProfileComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ UserProfileComponent ]
+    })
+    .compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(UserProfileComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+user-profile.component.ts
+import { Component, OnInit } from '@angular/core';
+import { LoginService } from 'src/app/services/login.service';
+
+@Component({
+  selector: 'app-user-profile',
+  templateUrl: './user-profile.component.html',
+  styleUrls: ['./user-profile.component.css']
+})
+export class UserProfileComponent implements OnInit {
+  user = null;
+  constructor(private login: LoginService) { }
+
+  ngOnInit(): void {
+    this.user = this.login.getUser();
+  }
+
+}
+

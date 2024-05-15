@@ -1,0 +1,1884 @@
+add-category
+inside add-category folder I have following files with code:
+add-category.component.css
+.w100 {
+  width: 100%;
+}
+
+add-category.component.html
+<mat-card class="col-md-10 offset-md-1">
+  <div class="container text-center mt20">
+    <h1><strong> Add New Category</strong></h1>
+  </div>
+
+  <mat-card-content>
+    <div class="bootstrap-wrapper">
+      <div class="row">
+        <div class="col-md-8 offset-md-2">
+          <form (ngSubmit)="formSubmit()">
+            <mat-form-field class="w100" appearance="outline">
+              <mat-label>Title</mat-label>
+
+              <input
+                required
+                autofocus
+                type="text"
+                name="title"
+                matInput
+                placeholder="Enter here"
+                [(ngModel)]="category.title"
+              />
+            </mat-form-field>
+
+            <mat-form-field class="w100" appearance="outline">
+              <mat-label>Description</mat-label>
+
+              <textarea
+                name="description"
+                matInput
+                placeholder="Enter Category Description"
+                [(ngModel)]="category.description"
+                rows="15"
+              ></textarea>
+            </mat-form-field>
+
+            <div class="container text-center mt15">
+              <button mat-raised-button color="accent">
+                <mat-icon class="mr-2">add</mat-icon>Add Category
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+add-category.component.spec.ts
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { AddCategoryComponent } from './add-category.component';
+
+describe('AddCategoryComponent', () => {
+  let component: AddCategoryComponent;
+  let fixture: ComponentFixture<AddCategoryComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ AddCategoryComponent ]
+    })
+    .compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(AddCategoryComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+add-category.component.ts
+import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { CategoryService } from 'src/app/services/category.service';
+import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-add-category',
+  templateUrl: './add-category.component.html',
+  styleUrls: ['./add-category.component.css'],
+})
+export class AddCategoryComponent implements OnInit {
+  category = {
+    title: '',
+    description: '',
+  };
+
+  constructor(
+    private _category: CategoryService,
+    private _snack: MatSnackBar,
+    private _router: Router
+  ) {}
+
+  ngOnInit(): void {}
+
+  formSubmit() {
+    if (this.category.title.trim() == '' || this.category.title == null) {
+      this._snack.open('Title Required !!', '', {
+        duration: 3000,
+      });
+      return;
+    }
+
+    this._category.addCategory(this.category).subscribe(
+      (data: any) => {
+        this.category.title = '';
+        this.category.description = '';
+        Swal.fire(
+          'Success !!',
+          'Category is added successfuly',
+          'success'
+        ).then((e) => {
+          this._router.navigate(['/admin/categories']);
+        });
+      },
+      (error) => {
+        console.log(error);
+        Swal.fire('Error !!', 'Server error !!', 'error');
+      }
+    );
+  }
+}
+
+
+
+
+add-question
+inside add-question folder I have following files with code:
+add-question.component.css
+.w100 {
+  width: 100%;
+}
+
+add-question.component.html
+<div class="bootstrap-wrapper">
+  <div class="row mt20">
+    <div class="col-md-12 text-center">
+      <div class="text-center">
+        <h1>
+          Add Question to <span style="font-weight: bold">{{ qTitle }}</span>
+        </h1>
+      </div>
+      <mat-card class="col-md-10 offset-md-1">
+        <mat-card-header>
+          <mat-card-subtitle>
+            <span style="font-weight: bold"
+              >Enter the details of the Question</span
+            >
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <form class="mt20" (submit)="formSubmit()">
+            <ckeditor
+              [editor]="Editor"
+              name="content"
+              required
+              [(ngModel)]="question.content"
+            ></ckeditor>
+
+            <div class="row">
+              <div class="col-md-6">
+                <mat-form-field class="w100">
+                  <mat-label>Enter Option 1</mat-label>
+                  <input
+                    [(ngModel)]="question.option1"
+                    name="option1"
+                    type="text"
+                    required
+                    matInput
+                  />
+                </mat-form-field>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field class="w100">
+                  <mat-label>Enter Option 2</mat-label>
+                  <input
+                    [(ngModel)]="question.option2"
+                    name="option2"
+                    type="text"
+                    required
+                    matInput
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <mat-form-field class="w100">
+                  <mat-label>Enter Option 3</mat-label>
+                  <input
+                    [(ngModel)]="question.option3"
+                    name="option3"
+                    type="text"
+                    required
+                    matInput
+                  />
+                </mat-form-field>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field class="w100">
+                  <mat-label>Enter Option 4</mat-label>
+                  <input
+                    [(ngModel)]="question.option4"
+                    name="option4"
+                    type="text"
+                    required
+                    matInput
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+
+            <mat-form-field class="w100">
+              <mat-label>Select Answer</mat-label>
+              <mat-select required [(ngModel)]="question.answer" name="answer">
+                <mat-option
+                  *ngIf="question.option1"
+                  [value]="question.option1"
+                  >{{ question.option1 }}</mat-option
+                >
+                <mat-option
+                  *ngIf="question.option2"
+                  [value]="question.option2"
+                  >{{ question.option2 }}</mat-option
+                >
+                <mat-option
+                  *ngIf="question.option3"
+                  [value]="question.option3"
+                  >{{ question.option3 }}</mat-option
+                >
+                <mat-option
+                  *ngIf="question.option4"
+                  [value]="question.option4"
+                  >{{ question.option4 }}</mat-option
+                >
+              </mat-select>
+            </mat-form-field>
+
+            <div class="container text-center">
+              <button mat-raised-button color="accent">
+                <mat-icon class="mr-2">add</mat-icon>Add
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+add-question.component.spec.ts
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { AddQuestionComponent } from './add-question.component';
+
+describe('AddQuestionComponent', () => {
+  let component: AddQuestionComponent;
+  let fixture: ComponentFixture<AddQuestionComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ AddQuestionComponent ]
+    })
+    .compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(AddQuestionComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+add-question.component.ts
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { QuestionService } from 'src/app/services/question.service';
+import { QuizService } from 'src/app/services/quiz.service';
+import Swal from 'sweetalert2';
+import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-add-question',
+  templateUrl: './add-question.component.html',
+  styleUrls: ['./add-question.component.css'],
+})
+export class AddQuestionComponent implements OnInit {
+  public Editor = ClassicEditor;
+  numberOfQuestions: number;
+  qId;
+  qTitle;
+  question = {
+    quiz: {},
+    content: '',
+    option1: '',
+    option2: '',
+    option3: '',
+    option4: '',
+    answer: '',
+  };
+
+  constructor(
+    private _route: ActivatedRoute,
+    private _question: QuestionService,
+    private _router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.qId = this._route.snapshot.params.qid;
+    this.qTitle = this._route.snapshot.params.title;
+    this.question.quiz['qId'] = this.qId;
+
+    this.numberOfQuestions = +this._route.snapshot.params.numberOfQuestions;
+  }
+
+  formSubmit() {
+    if (this.question.content.trim() == '' || this.question.content == null) {
+      return;
+    }
+
+    if (this.question.option1.trim() == '' || this.question.option1 == null) {
+      return;
+    }
+    if (this.question.option2.trim() == '' || this.question.option2 == null) {
+      return;
+    }
+    if (this.question.answer.trim() == '' || this.question.answer == null) {
+      return;
+    }
+
+    if (
+      this._route.snapshot.params.numberOfQuestions < this.numberOfQuestions
+    ) {
+      Swal.fire(
+        'Warning',
+        `You can only add up to ${this.numberOfQuestions} questions.`,
+        'warning'
+      );
+      return;
+    }
+
+    this._question.addQuestion(this.question).subscribe(
+      (data: any) => {
+        Swal.fire('Success ', 'Question Added', 'success').then((e) => {
+          this._router.navigate(['/admin/view-questions']);
+        });
+        this.question.content = '';
+        this.question.option1 = '';
+        this.question.option2 = '';
+        this.question.option3 = '';
+        this.question.option4 = '';
+        this.question.answer = '';
+      },
+      (error) => {
+        Swal.fire('Error', 'Error in adding question', 'error');
+      }
+    );
+  }
+}
+
+
+add-quiz
+inside add-quiz folder I have following files with code:
+add-quiz.component.css
+.w100 {
+  width: 100%;
+}
+
+add-quiz.component.html
+<mat-card>
+  <div class="text-center"><h1>Add New Quiz</h1></div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <form (ngSubmit)="addQuiz()">
+          <mat-form-field class="w100" appearance="fill">
+            <mat-label>Enter Title</mat-label>
+            <input
+              [(ngModel)]="quizData.title"
+              type="text"
+              name="title"
+              placeholder="Enter here"
+              matInput
+              required
+            />
+          </mat-form-field>
+
+          <mat-form-field class="w100" appearance="fill">
+            <mat-label>Enter Description </mat-label>
+            <textarea
+              [(ngModel)]="quizData.description"
+              type="text"
+              name="description"
+              placeholder="Enter here"
+              matInput
+              rows="5"
+            ></textarea>
+          </mat-form-field>
+
+          <div class="row">
+            <div class="col-md-6">
+              <mat-form-field class="w100" appearance="fill">
+                <mat-label>Maximum Marks</mat-label>
+                <input
+                  [(ngModel)]="quizData.maxMarks"
+                  type="text"
+                  name="maxMarks"
+                  placeholder="Enter here"
+                  matInput
+                />
+              </mat-form-field>
+            </div>
+            <div class="col-md-6">
+              <mat-form-field class="w100" appearance="fill">
+                <mat-label>Number of Question</mat-label>
+                <input
+                  [(ngModel)]="quizData.numberOfQuestions"
+                  type="text"
+                  name="numberOfQuestions"
+                  placeholder="Enter here"
+                  matInput
+                />
+              </mat-form-field>
+            </div>
+          </div>
+
+          <mat-slide-toggle
+            name="active"
+            [(ngModel)]="quizData.active"
+            class="mt20"
+          >
+            Publish Status
+          </mat-slide-toggle>
+
+          <br />
+          <mat-form-field appearance="fill" class="mt20 w100">
+            <mat-label>Categories</mat-label>
+            <mat-select name="category" [(ngModel)]="quizData.category.cid">
+              <mat-option *ngFor="let c of categories" [value]="c.cid">
+                {{ c.title }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div class="container text-center">
+            <button mat-raised-button color="accent" type="submit">
+              <mat-icon class="mr-2">add</mat-icon>Add
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</mat-card>
+
+add-quiz.component.spec.ts
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { AddQuizComponent } from './add-quiz.component';
+
+describe('AddQuizComponent', () => {
+  let component: AddQuizComponent;
+  let fixture: ComponentFixture<AddQuizComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ AddQuizComponent ]
+    })
+    .compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(AddQuizComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+add-quiz.component.ts
+import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { CategoryService } from 'src/app/services/category.service';
+import { QuizService } from 'src/app/services/quiz.service';
+import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-add-quiz',
+  templateUrl: './add-quiz.component.html',
+  styleUrls: ['./add-quiz.component.css'],
+})
+export class AddQuizComponent implements OnInit {
+  categories = [];
+  qId: any;
+
+  quizData = {
+    title: '',
+    description: '',
+    maxMarks: '',
+    numberOfQuestions: '',
+    active: true,
+    category: {
+      cid: '',
+    },
+  };
+
+  constructor(
+    private _cat: CategoryService,
+    private _snack: MatSnackBar,
+    private _quiz: QuizService,
+    private _router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this._cat.categories().subscribe(
+      (data: any) => {
+        this.categories = data;
+      },
+
+      (error) => {
+        console.log(error);
+        Swal.fire('Error!!', 'error in loading data from server', 'error');
+      }
+    );
+  }
+
+  addQuiz() {
+    if (this.quizData.title.trim() == '' || this.quizData.title == null) {
+      this._snack.open('Title Required !!', '', {
+        duration: 3000,
+      });
+      return;
+    }
+
+    this._quiz.addQuiz(this.quizData).subscribe(
+      (data) => {
+        Swal.fire('Success', 'Quiz is added Successfully', 'success').then(
+          (e) => {
+            this._router.navigate(['/admin/quizzes']);
+          }
+        );
+
+        this._router.navigate([
+          '/admin/add-question',
+          this.qId,
+          this.quizData.numberOfQuestions,
+        ]);
+        this.quizData = {
+          title: '',
+          description: '',
+          maxMarks: '',
+          numberOfQuestions: '',
+          active: true,
+          category: {
+            cid: '',
+          },
+        };
+      },
+
+      (error) => {
+        Swal.fire('Error!! ', 'Error while adding quiz', 'error');
+        console.log(error);
+      }
+    );
+  }
+}
+
+
+dashboard
+inside dashboard folder I have following files with code:
+dashboard.component.css
+dashboard.component.html
+<div class="bootstrap-wrapper">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-2">
+        <app-sidebar></app-sidebar>
+      </div>
+
+      <div class="col-md-10">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>
+
+dashboard.component.spec.ts
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { DashboardComponent } from './dashboard.component';
+
+describe('DashboardComponent', () => {
+  let component: DashboardComponent;
+  let fixture: ComponentFixture<DashboardComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ DashboardComponent ]
+    })
+    .compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(DashboardComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+dashboard.component.ts
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-dashboard',
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.css']
+})
+export class DashboardComponent implements OnInit {
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+}
+
+
+result
+inside result folder I have following files with code:
+result.component.css
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    
+  }
+  
+  .table tr td {
+    padding: 15px 10px;
+    border: 0.5px solid #e2e2e2;
+  }
+  
+  .card {
+    padding: 5px;
+    margin: 20px;
+    margin-left: 13vw;
+    width: 70%;
+    justify-content: center;
+    align-items: center;
+  }
+result.component.html
+<mat-card class="card" *ngIf="result"  >
+  <div class="container text-center">
+    <h1 style="margin-top: 10px">Result</h1>
+  </div>
+  <mat-card-content>
+    <div class="bootstrap-wrapper">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-10 offset-md-1">
+            <table class="table text-center">
+              <tr>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Question Attempted</th>
+                <th>Correct Answer</th>
+                <th>Scored Marks</th>
+                <th>Submitted Date Time</th>
+              </tr>
+
+              <tr>
+                <td>{{ result.username }}</td>
+                <td>{{ result.firstName }} {{ result.lastName }}</td>
+                <td>{{ result.qAttempted }}</td>
+                <td>{{ result.correctAns }}</td>
+                <td>{{ result.marksScored }}</td>
+                <td>{{ result.submitDateTime }}</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions class="text-center" style="margin-bottom: 10px">
+    <button mat-raised-button color="primary" routerLink="/admin/profile">
+      GO TO HOME
+    </button>
+  </mat-card-actions>
+</mat-card>
+
+result.component.spec.ts
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { ResultComponent } from './result.component';
+
+describe('ResultComponent', () => {
+  let component: ResultComponent;
+  let fixture: ComponentFixture<ResultComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ ResultComponent ]
+    })
+    .compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(ResultComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+result.component.ts
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { ResultService } from 'src/app/services/result.service';
+
+@Component({
+  selector: 'app-result',
+  templateUrl: './result.component.html',
+  styleUrls: ['./result.component.css']
+})
+export class ResultComponent implements OnInit {
+  result= null;
+  results=[];
+  qid;
+  uid;
+
+  constructor(private resultService: ResultService,private route: ActivatedRoute) { }
+
+  ngOnInit(): void {
+    this.qid = this.route.snapshot.params['qid'];
+    this.qid = this.route.snapshot.params['uid'];
+    this.result = this.resultService.getResultByUserAndQuiz(this.qid, this.uid).subscribe((data) =>{
+      console.log(data);
+      this.result = data;
+
+    });
+
+
+  }
+
+}
+
+// this.qid = this.route.snapshot.params['qid'];
+    // this.qid = this.route.snapshot.params['uid'];
+    // this.resultService.getResultByUserAndQuiz(this.qid, this.uid).subscribe((data) =>{
+    //   console.log(data);
+    //   this.result = data;
+
+    // });
+
+
+
+sidebar
+inside sidebar folder I have following files with code:
+sidebar.component.css
+.active {
+    color: #4343e4;
+    font-weight: bold !important;
+    font-size: 18px;
+  }
+  .sidebar {
+    width: 240px;
+    background-color: rgb(207, 214, 210);
+    margin-top: 0px;
+    margin-bottom: 5px;
+    margin-left: -30px;
+    height: 100%;
+  }
+  .list{
+    
+    font-weight: 600;
+  }
+sidebar.component.html
+<mat-card class="sidebar">
+  <mat-nav-list>
+    <mat-list-item
+      class="list"
+      *ngFor="let item of listItems"
+      [routerLink]="item.link"
+      routerLinkActive="active"
+    >
+      <mat-icon matListIcon>{{ item.icon }}</mat-icon>
+
+      {{ item.linkTitle }}
+    </mat-list-item>
+  </mat-nav-list>
+</mat-card>
+
+sidebar.component.spec.ts
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { SidebarComponent } from './sidebar.component';
+
+describe('SidebarComponent', () => {
+  let component: SidebarComponent;
+  let fixture: ComponentFixture<SidebarComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ SidebarComponent ]
+    })
+    .compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(SidebarComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+sidebar.component.ts
+import { Component, OnInit } from '@angular/core';
+import { LoginService } from 'src/app/services/login.service';
+
+@Component({
+  selector: 'app-sidebar',
+  templateUrl: './sidebar.component.html',
+  styleUrls: ['./sidebar.component.css'],
+})
+export class SidebarComponent implements OnInit {
+  listItems = [
+    { linkTitle: 'Home ', link: '/admin/profile', icon: 'home' },
+    { linkTitle: 'Category', link: '/admin/categories', icon: 'category' },
+    {
+      linkTitle: 'Add Category',
+      link: '/admin/add-category',
+      icon: 'category',
+    },
+    { linkTitle: 'Quizzes', link: '/admin/quizzes', icon: 'list' },
+    { linkTitle: 'Add Quiz', link: '/admin/add-quiz', icon: 'add' },
+    // { linkTitle: 'Result', link: '/admin/result', icon: 'result' },
+    // { linkTitle: 'Logout', link: '/', icon: 'login' },
+  ];
+
+  constructor(private loginService: LoginService) {}
+
+  ngOnInit(): void {}
+}
+
+
+
+
+update-category
+inside update-category folder I have following files with code:
+update-category.component.css
+.w100 {
+    width: 100%;
+  }
+  
+update-category.component.html
+<mat-card class="col-md-10 offset-md-1">
+  <div class="container text-center mt20">
+    <h1><strong> Update Category</strong></h1>
+  </div>
+
+  <mat-card-content>
+    <div class="bootstrap-wrapper">
+      <div class="row">
+        <div class="col-md-8 offset-md-2">
+          <form *ngIf="categories" (ngSubmit)="updateCategory()">
+            <mat-form-field class="w100" appearance="outline">
+              <mat-label>Title</mat-label>
+              <input
+                required
+                [(ngModel)]="categories.title"
+                name="title"
+                matInput
+                placeholder="Enter Title here"
+              />
+            </mat-form-field>
+
+            <mat-form-field class="w100" appearance="outline">
+              <mat-label>Description</mat-label>
+              <textarea
+                matInput
+                placeholder="Enter Description here"
+                rows="10"
+                [(ngModel)]="categories.description"
+                name="description"
+                required
+              ></textarea>
+            </mat-form-field>
+
+            <div class="container text-center">
+              <button mat-raised-button color="accent" type="submit">
+                <mat-icon class="mr-2">edit</mat-icon>Update Category
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+update-category.component.spec.ts
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { UpdateCategoryComponent } from './update-category.component';
+
+describe('UpdateCategoryComponent', () => {
+  let component: UpdateCategoryComponent;
+  let fixture: ComponentFixture<UpdateCategoryComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ UpdateCategoryComponent ]
+    })
+    .compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(UpdateCategoryComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+update-category.component.ts
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { CategoryService } from 'src/app/services/category.service';
+import Swal from 'sweetalert2';
+
+@Component({
+  selector: 'app-update-category',
+  templateUrl: './update-category.component.html',
+  styleUrls: ['./update-category.component.css'],
+})
+export class UpdateCategoryComponent implements OnInit {
+  categories: any;
+  cid: any;
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private categoryService: CategoryService,
+    private snackbar: MatSnackBar
+  ) {}
+
+  ngOnInit(): void {
+    this.cid = this.route.snapshot.params['cid'];
+    this.categoryService.getCategory(this.cid).subscribe((data) => {
+      console.log(data);
+      this.categories = data;
+    });
+  }
+
+  updateCategory() {
+    if (this.categories.title.trim() == '' || this.categories.title == null) {
+      this.snackbar.open('Title is required', 'Ok', {
+        duration: 3000,
+      });
+
+      return;
+    }
+    if (
+      this.categories.description.trim() == '' ||
+      this.categories.description == null
+    ) {
+      this.snackbar.open('Description is required', 'Ok', {
+        duration: 3000,
+      });
+
+      return;
+    }
+    this.categoryService.updateCategory(this.categories).subscribe(
+      (data) => {
+        console.log(data);
+        Swal.fire('Done', 'Category is Updated', 'success').then((e) => {
+          this.router.navigate(['/admin/categories']);
+        });
+      },
+      (error) => {
+        this.snackbar.open('Category could not be updated', 'Ok', {
+          duration: 3000,
+        });
+      }
+    );
+  }
+}
+
+
+update-question
+inside update-question folder I have following files with code:
+update-question.component.css
+.w100 {
+    width: 100%;
+  }
+  .bootstrap-wrapper{
+    margin-left: 10px;
+  }
+  
+update-question.component.html
+<div class="bootstrap-wrapper">
+  <div class="text-center mt10">
+    <h1>
+      Update Question<span style="font-weight: bold">{{ qtitle }}</span>
+    </h1>
+  </div>
+  <div>
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <mat-card class="col-md-10 offset-md-1">
+          <mat-card-header>
+            <mat-card-subtitle>
+              <span style="font-weight: bold"
+                >Enter the details of the Question</span
+              >
+            </mat-card-subtitle>
+          </mat-card-header>
+
+          <form *ngIf="question" (submit)="updateSubmit()">
+            <ckeditor
+              [editor]="Editor"
+              name="content"
+              required
+              [(ngModel)]="question.content"
+            ></ckeditor>
+
+            <div class="row">
+              <div class="col-md-6">
+                <mat-form-field class="w100 mt10" appearance="fill">
+                  <mat-label>Enter Option 1</mat-label>
+                  <input
+                    [(ngModel)]="question.option1"
+                    name="option1"
+                    type="text"
+                    required
+                    placeholder="Enter here"
+                    matInput
+                  />
+                </mat-form-field>
+              </div>
+
+              <div class="col-md-6">
+                <mat-form-field class="w100 mt10" appearance="fill">
+                  <mat-label>Enter Option 2</mat-label>
+                  <input
+                    [(ngModel)]="question.option2"
+                    name="option2"
+                    type="text"
+                    required
+                    placeholder="Enter here"
+                    matInput
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <mat-form-field class="w100" appearance="fill">
+                  <mat-label>Enter Option 3</mat-label>
+                  <input
+                    [(ngModel)]="question.option3"
+                    name="option3"
+                    type="text"
+                    required
+                    placeholder="Enter here"
+                    matInput
+                  />
+                </mat-form-field>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field class="w100" appearance="fill">
+                  <mat-label>Enter Option 4</mat-label>
+                  <input
+                    [(ngModel)]="question.option4"
+                    name="option4"
+                    type="text"
+                    required
+                    placeholder="Enter here"
+                    matInput
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+
+            <mat-form-field class="w100">
+              <mat-label>Select Answer</mat-label>
+              <mat-select required [(ngModel)]="question.answer" name="answer">
+                <mat-option
+                  *ngIf="question.option1"
+                  [value]="question.option1"
+                  >{{ question.option1 }}</mat-option
+                >
+                <mat-option
+                  *ngIf="question.option2"
+                  [value]="question.option2"
+                  >{{ question.option2 }}</mat-option
+                >
+                <mat-option
+                  *ngIf="question.option3"
+                  [value]="question.option3"
+                  >{{ question.option3 }}</mat-option
+                >
+                <mat-option
+                  *ngIf="question.option4"
+                  [value]="question.option4"
+                  >{{ question.option4 }}</mat-option
+                >
+              </mat-select>
+            </mat-form-field>
+
+            <div class="container text-center">
+              <button mat-raised-button color="accent" type="submit">
+                Update Question
+              </button>
+            </div>
+          </form>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>
+
+update-question.component.spec.ts
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { UpdateQuestionComponent } from './update-question.component';
+
+describe('UpdateQuestionComponent', () => {
+  let component: UpdateQuestionComponent;
+  let fixture: ComponentFixture<UpdateQuestionComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ UpdateQuestionComponent ]
+    })
+    .compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(UpdateQuestionComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+update-question.component.ts
+import { Component, OnInit } from '@angular/core';
+import { QuestionService } from 'src/app/services/question.service';
+import { QuizService } from 'src/app/services/quiz.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import Swal from 'sweetalert2';
+import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+
+@Component({
+  selector: 'app-update-question',
+  templateUrl: './update-question.component.html',
+  styleUrls: ['./update-question.component.css'],
+})
+export class UpdateQuestionComponent implements OnInit {
+  public Editor = ClassicEditor;
+  question: any;
+  qid: any;
+  qtitle: any;
+  quesId: any;
+
+  constructor(
+    private quizService: QuizService,
+    private questionService: QuestionService,
+    private route: ActivatedRoute,
+    private snackbar: MatSnackBar,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.quesId = this.route.snapshot.params.quesId;
+    this.qtitle = this.route.snapshot.params.title;
+
+    this.questionService.getQuestionsOfQuizForTest(this.quesId).subscribe(
+      (data) => {
+        console.log(data);
+        this.question = data;
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+  public updateSubmit() {
+    this.questionService.updateQuestion(this.question).subscribe(
+      (data) => {
+        console.log(data);
+        Swal.fire('Done', 'Question is Updated', 'success').then((e) => {
+          this.router.navigate(['/admin/quizzes/']);
+        });
+      },
+      (error) => {
+        this.snackbar.open('Question could not be updated', 'ok', {
+          duration: 3000,
+        });
+      }
+    );
+  }
+}
+
+
+update-quiz
+inside update-quiz folder I have following files with code:
+update-quizz.component.css
+.w100 {
+  width: 100%;
+}
+
+update-quiz.component.html
+<mat-card>
+  <div class="text-center"><h1>Update Quiz</h1></div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <form *ngIf="quiz" (submit)="updateData()">
+          <mat-form-field class="w100" appearance="fill">
+            <mat-label>Enter Title</mat-label>
+            <input
+              [(ngModel)]="quiz.title"
+              type="text"
+              name="title"
+              placeholder="Enter here"
+              matInput
+              required
+            />
+          </mat-form-field>
+
+          <mat-form-field class="w100" appearance="fill">
+            <mat-label>Enter Description </mat-label>
+            <textarea
+              [(ngModel)]="quiz.description"
+              type="text"
+              name="description"
+              placeholder="Enter here"
+              matInput
+              rows="5"
+            ></textarea>
+          </mat-form-field>
+
+          <div class="row">
+            <div class="col-md-6">
+              <mat-form-field class="w100" appearance="fill">
+                <mat-label>Maximum Marks</mat-label>
+                <input
+                  [(ngModel)]="quiz.maxMarks"
+                  type="text"
+                  name="maxMarks"
+                  placeholder="Enter here"
+                  matInput
+                />
+              </mat-form-field>
+            </div>
+            <div class="col-md-6">
+              <mat-form-field class="w100" appearance="fill">
+                <mat-label>Number of Question</mat-label>
+                <input
+                  [(ngModel)]="quiz.numberOfQuestions"
+                  type="text"
+                  name="numberOfQuestions"
+                  placeholder="Enter here"
+                  matInput
+                />
+              </mat-form-field>
+            </div>
+          </div>
+          <mat-slide-toggle
+            name="active"
+            [(ngModel)]="quiz.active"
+            class="mt20"
+          >
+            Publish Status
+          </mat-slide-toggle>
+
+          <br />
+          <mat-form-field appearance="fill" class="mt20 w100">
+            <mat-label>Categories</mat-label>
+            <mat-select name="category" [(ngModel)]="quiz.category.cid">
+              <mat-option *ngFor="let c of categories" [value]="c.cid">
+                {{ c.title }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div class="container text-center">
+            <button mat-raised-button color="accent" type="submit">
+              Update
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</mat-card>
+
+update-quiz.component.spec.ts
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { UpdateQuizComponent } from './update-quiz.component';
+
+describe('UpdateQuizComponent', () => {
+  let component: UpdateQuizComponent;
+  let fixture: ComponentFixture<UpdateQuizComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ UpdateQuizComponent ]
+    })
+    .compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(UpdateQuizComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+update-quiz.component.ts
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CategoryService } from 'src/app/services/category.service';
+import { QuizService } from 'src/app/services/quiz.service';
+import Swal from 'sweetalert2';
+
+@Component({
+  selector: 'app-update-quiz',
+  templateUrl: './update-quiz.component.html',
+  styleUrls: ['./update-quiz.component.css'],
+})
+export class UpdateQuizComponent implements OnInit {
+  constructor(
+    private _route: ActivatedRoute,
+    private _quiz: QuizService,
+    private _cat: CategoryService,
+    private _router: Router
+  ) {}
+
+  qId = 0;
+  quiz;
+  categories;
+
+  ngOnInit(): void {
+    this.qId = this._route.snapshot.params.qid;
+    this._quiz.getQuiz(this.qId).subscribe(
+      (data: any) => {
+        this.quiz = data;
+        console.log(this.quiz);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+
+    this._cat.categories().subscribe(
+      (data: any) => {
+        this.categories = data;
+      },
+      (error) => {
+        alert('error in loading categories');
+      }
+    );
+  }
+
+  public updateData() {
+    this._quiz.updateQuiz(this.quiz).subscribe(
+      (data) => {
+        Swal.fire('Success !!', 'Quiz Updated', 'success').then((e) => {
+          this._router.navigate(['/admin/quizzes']);
+        });
+      },
+      (error) => {
+        Swal.fire('Error', 'error in updating quiz', 'error');
+        console.log(error);
+      }
+    );
+  }
+}
+
+
+view-categories
+inside view-categories folder I have following files with code:
+view-categories.component.css
+.image {
+    width: 80%;
+    height: 80px;
+    margin-top: 20px;
+  }
+  
+  .card {
+    margin-bottom: 20px;
+  }
+  
+view-categories.component.html
+<div class="container text-center mt-2">
+  <div class="mat-headline">All Categories</div>
+  <div class="row">
+    <div class="col-lg-4 col-sm-6" *ngFor="let cat of categories">
+      <mat-card class="card">
+        <!-- <img
+          mat-card-image
+          src="../../../../assets/category.jpg"
+          alt="php"
+          class="image"
+          style="width: 100px; height: auto;"
+        /> -->
+        <div class="mat-title">{{ cat.title }}</div>
+        <div class="mat-subheading-1">{{ cat.description }}</div>
+        <mat-card-actions>
+          <button
+            mat-raised-button
+            color="primary"
+            class="mb-2"
+            (click)="updateCategory(cat.cid)"
+          >
+            <mat-icon>edit</mat-icon> Update
+          </button>
+          <button
+            mat-raised-button
+            color="warn"
+            (click)="deleteCategory(cat.cid)"
+          >
+            <mat-icon>delete</mat-icon> Delete
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+view-categories.component.spec.ts
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { ViewCategoriesComponent } from './view-categories.component';
+
+describe('ViewCategoriesComponent', () => {
+  let component: ViewCategoriesComponent;
+  let fixture: ComponentFixture<ViewCategoriesComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ ViewCategoriesComponent ]
+    })
+    .compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(ViewCategoriesComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+view-categories.component.ts
+import { Component, OnInit } from '@angular/core';
+import { CategoryService } from 'src/app/services/category.service';
+import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-view-categories',
+  templateUrl: './view-categories.component.html',
+  styleUrls: ['./view-categories.component.css'],
+})
+export class ViewCategoriesComponent implements OnInit {
+  categories = [];
+
+  constructor(private _category: CategoryService, private router:Router) {}
+
+  ngOnInit(): void {
+    this._category.categories().subscribe(
+      (data: any) => {
+        //css
+        this.categories = data;
+        console.log(this.categories);
+      },
+
+      (error) => {
+        //
+        console.log(error);
+        Swal.fire('Error !!', 'Error in loading data', 'error');
+      }
+    );
+  }
+
+  deleteCategory(cid: any) {
+    Swal.fire({
+      icon: 'info',
+      title: 'Are you sure you want to delete?',
+      confirmButtonText: 'Delete',
+      showCancelButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this._category.deleteCategory(cid).subscribe(
+          (data) => {
+            this.ngOnInit();
+            Swal.fire('Success!', 'Category Deleted ', 'success');
+          },
+          (error) => {
+            Swal.fire('Error!', 'server loading error', 'error');
+          }
+        );
+      }
+    });
+  }
+
+  updateCategory(cid: any) {
+    this.router.navigate(['/admin/update-category/',cid]);
+  }
+}
+
+
+view-quiz-categories
+inside view-quiz-categories folder I have following files with code:
+view-quiz-categories.component.css
+view-quiz-categories.component.html
+<div class="container text-center mt20">
+  <h1 class="mt20">Questions of {{ qTitle }}</h1>
+</div>
+
+<div class="bootstrap-wrapper">
+  <div class="row">
+    <div class="col-md-10 offset-md-1">
+      <div class="container text-center">
+        <button
+          mat-raised-button
+          color="accent"
+          [routerLink]="'/admin/add-question/' + qId + '/' + qTitle"
+        >
+          Add Question
+        </button>
+      </div>
+
+      <mat-card *ngFor="let q of questions; let i = index" class="mt20">
+        <mat-card-content>
+          <p>
+            <b> Q {{ i + 1 }})</b>
+            <span class="ml20" [innerHTML]="q.content"></span>
+          </p>
+
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-md-6">
+                <p><b>1)</b> {{ q.option1 }}</p>
+              </div>
+              <div class="col-md-6">
+                <p><b>2)</b> {{ q.option2 }}</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <p><b>3)</b> {{ q.option3 }}</p>
+              </div>
+              <div class="col-md-6">
+                <p><b>4)</b> {{ q.option4 }}</p>
+              </div>
+            </div>
+            <mat-divider></mat-divider>
+            <p class="mt20"><b>Correct Answer:</b> {{ q.answer }}</p>
+          </div>
+        </mat-card-content>
+
+        <mat-card-action>
+          <button mat-button color="warn" (click)="updateQuestion(q.quesId)">
+            <mat-icon>edit</mat-icon> Update
+          </button>
+
+          <button mat-button (click)="deleteQuestion(q.quesId)" color="warn">
+            <mat-icon>delete</mat-icon> Delete
+          </button>
+        </mat-card-action>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+view-quiz-categories.component.spec.ts
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { ViewQuizQuestionsComponent } from './view-quiz-questions.component';
+
+describe('ViewQuizQuestionsComponent', () => {
+  let component: ViewQuizQuestionsComponent;
+  let fixture: ComponentFixture<ViewQuizQuestionsComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ ViewQuizQuestionsComponent ]
+    })
+    .compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(ViewQuizQuestionsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+view-quiz-categories.component.ts
+import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute, Router } from '@angular/router';
+import { QuestionService } from 'src/app/services/question.service';
+import Swal from 'sweetalert2';
+
+@Component({
+  selector: 'app-view-quiz-questions',
+  templateUrl: './view-quiz-questions.component.html',
+  styleUrls: ['./view-quiz-questions.component.css'],
+})
+export class ViewQuizQuestionsComponent implements OnInit {
+  qId;
+  qTitle;
+  questions = [];
+
+  constructor(
+    private _route: ActivatedRoute,
+    private _question: QuestionService,
+    private _snak: MatSnackBar,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.qId = this._route.snapshot.params.qid;
+    this.qTitle = this._route.snapshot.params.title;
+    this._question.getQuestionsOfQuiz(this.qId).subscribe(
+      (data: any) => {
+        console.log(data);
+        this.questions = data;
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  deleteQuestion(qid) {
+    Swal.fire({
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      title: 'Are you sure want to delete this question?',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this._question.deleteQuestion(qid).subscribe(
+          (data) => {
+            this._snak.open('Question Deleted ', '', {
+              duration: 3000,
+            });
+            this.questions = this.questions.filter((q) => q.quesId != qid);
+          },
+
+          (error) => {
+            this._snak.open('Error in deleting questions', '', {
+              duration: 3000,
+            });
+            console.log(error);
+          }
+        );
+      }
+    });
+  }
+
+  updateQuestion(quesId: any) {
+    this.router.navigate(['/admin/update-question/', quesId]);
+  }
+}
+
+
+view-quizzes
+inside view-quizzes folder I have following files with code:
+view-quizzes.component.css
+.example-header-image {
+  background-image: url("../../../../assets/exam.png");
+  background-size: cover;
+}
+
+view-quizzes.component.html
+<div class="mat-headline text-center">All Quizzes</div>
+<mat-card class="mt10 mr20 ml20" *ngFor="let q of quizzes">
+  <mat-card-header>
+    <div mat-card-avatar class="example-header-image"></div>
+    <mat-card-title>
+      {{ q.title }}
+    </mat-card-title>
+    <mat-card-subtitle>
+      {{ q.category.title }}
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <p>{{ q.description }}</p>
+  </mat-card-content>
+  <mat-card-action>
+    <button
+      [routerLink]="'/admin/view-questions/' + q.qId + '/' + q.title"
+      mat-flat-button
+      color="primary"
+    >
+      Add Questions
+    </button>
+
+    <button mat-stroked-button color="accent" class="ml20">
+      Max Marks: {{ q.maxMarks }}
+    </button>
+
+    <button mat-stroked-button color="accent" class="ml20">
+      Total Questions: {{ q.numberOfQuestions }}
+    </button>
+    
+    <button
+      [routerLink]="'/admin/quiz/' + q.qId"
+      mat-flat-button
+      color="accent"
+      class="ml20"
+    >
+      <mat-icon>edit</mat-icon>
+    </button>
+
+    <button
+      mat-flat-button
+      color="warn"
+      class="ml10"
+      (click)="deleteQuiz(q.qId)"
+    >
+      <mat-icon>delete</mat-icon>
+    </button>
+  </mat-card-action>
+</mat-card>
+
+<div class="container text-center mt20">
+  <button routerLink="/admin/add-quiz" mat-raised-button color="accent">
+    Add New Quiz
+  </button>
+</div>
+
+view-quizzes.component.spec.ts
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { ViewQuizzesComponent } from './view-quizzes.component';
+
+describe('ViewQuizzesComponent', () => {
+  let component: ViewQuizzesComponent;
+  let fixture: ComponentFixture<ViewQuizzesComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ ViewQuizzesComponent ]
+    })
+    .compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(ViewQuizzesComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+view-quizzes.component.ts
+import { Component, OnInit } from '@angular/core';
+import { QuizService } from 'src/app/services/quiz.service';
+import Swal from 'sweetalert2';
+
+@Component({
+  selector: 'app-view-quizzes',
+  templateUrl: './view-quizzes.component.html',
+  styleUrls: ['./view-quizzes.component.css'],
+})
+export class ViewQuizzesComponent implements OnInit {
+  quizzes = [];
+
+  constructor(private _quiz: QuizService) {}
+
+  ngOnInit(): void {
+    this._quiz.quizzes().subscribe(
+      (data: any) => {
+        this.quizzes = data;
+        console.log(this.quizzes);
+      },
+      (error) => {
+        console.log(error);
+        Swal.fire('Error !', 'Error in loading data !', 'error');
+      }
+    );
+  }
+
+  //
+  deleteQuiz(qId) {
+    Swal.fire({
+      icon: 'info',
+      title: 'Are you sure ?',
+      confirmButtonText: 'Delete',
+      showCancelButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this._quiz.deleteQuiz(qId).subscribe(
+          (data) => {
+            this.quizzes = this.quizzes.filter((quiz) => quiz.qId != qId);
+            Swal.fire('Success', 'Quiz deleted ', 'success');
+          },
+          (error) => {
+            Swal.fire('Error', 'Error in deleting quiz', 'error');
+          }
+        );
+      }
+    });
+  }
+}
+
+
+welcome
+inside welcome folder I have following files with code:
+welcome.component.css
+welcome.component.html
+welcome.component.spec.ts
+welcome.component.ts
